@@ -16,7 +16,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -58,8 +58,6 @@ jobs:
             exit 1
           fi
           echo "Smoke-testing the exact release image: $IMAGE"
-          # Do not assume port 8080. Many valid apps listen on 3000/4173/5173/etc.
-          # Prefer image EXPOSE values, then probe a small universal web-port set.
           mapfile -t EXPOSED < <(docker image inspect "${IMAGE}" --format '{{range $p, $_ := .Config.ExposedPorts}}{{println $p}}{{end}}' 2>/dev/null | sed -E 's#/.*$##' | sed '/^$/d' | sort -u)
           COMMON=(3000 3001 4173 5000 5173 6080 8000 8080 8081 8501)
           PORTS=()
@@ -95,7 +93,8 @@ jobs:
               fi
               j=$((j+1))
             done
-            if ! docker inspect -f '{{.State.Running}}' paf-smoke 2>/dev/null | grep -q true; then
+            if ! docker inspect -f '{{.State.Running}}' paf-smoke 2>/dev/null | grep -q true;
+            then
               echo 'Container exited before smoke test passed.'
               docker logs paf-smoke 2>/dev/null || true
               exit 1
@@ -110,7 +109,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          while IFS= read -r tag; do
+          while IFS= read -r tag;
+          do
             [[ -n "$tag" ]] || continue
             echo "Pushing tested image: $tag"
             docker image push "$tag"
