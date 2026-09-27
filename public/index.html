@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal Wiki</title>
+  <link rel="stylesheet" href="style.css">
+<style>.paf-made-by{position:fixed;right:8px;bottom:8px;width:min(72px,12vw);max-width:12vw;height:auto;object-fit:contain;opacity:.5;background:transparent;padding:0;border:0;box-shadow:none;filter:none;pointer-events:none;z-index:30}</style></head>
+<body>
+  <div id="app">
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+      <div class="auth-card">
+        <h1>Personal Wiki</h1>
+        <p class="subtitle">Your secure personal knowledge base</p>
+        <div class="auth-tabs">
+          <button id="tab-login" class="active" onclick="switchAuthTab('login')">Sign In</button>
+          <button id="tab-register" onclick="switchAuthTab('register')">Register</button>
+        </div>
+        <form id="auth-form" onsubmit="handleAuth(event)">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="auth-email" required placeholder="you@example.com">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="auth-password" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary" id="auth-submit-btn">Sign In</button>
+          <div id="auth-error" class="error-msg"></div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="main-screen" class="screen hidden">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <h2>📚 My Wiki</h2>
+          <button class="btn-icon" onclick="logout()" title="Sign Out">🚪</button>
+        </div>
+        <div class="sidebar-search">
+          <input type="text" id="global-search" placeholder="Search pages..." oninput="handleSearch(event)">
+        </div>
+        <div class="sidebar-actions">
+          <button class="btn btn-sm btn-primary" onclick="openNewPageModal()">+ New Page</button>
+          <button class="btn btn-sm btn-secondary" onclick="openNewFolderModal()">+ Folder</button>
+        </div>
+        <div class="sidebar-nav" id="sidebar-tree">
+          <!-- Folders and Pages Tree populated via JS -->
+        </div>
+      </aside>
+      <main class="content-area">
+        <div id="empty-state" class="empty-state">
+          <h2>Select a page or create a new one</h2>
+          <p>Organize your knowledge in folders, write in Markdown, and search effortlessly.</p>
+        </div>
+        <div id="page-editor-view" class="page-editor-view hidden">
+          <header class="editor-header">
+            <input type="text" id="page-title-input" placeholder="Page Title" oninput="triggerAutosave()">
+            <div class="editor-actions">
+              <span id="autosave-status" class="autosave-status">Saved</span>
+              <button class="btn btn-sm btn-danger" onclick="deleteCurrentPage()">Delete</button>
+            </div>
+          </header>
+          <div class="editor-container">
+            <div class="editor-pane">
+              <textarea id="page-markdown-input" placeholder="Write your content in Markdown here... [[Page Link]]" oninput="triggerAutosave()"></textarea>
+            </div>
+            <div class="preview-pane" id="page-preview-pane">
+              <!-- Rendered Markdown -->
+            </div>
+          </div>
+          <footer class="editor-footer">
+            <div class="attachments-section">
+              <h4>Attachments</h4>
+              <input type="file" id="attachment-file-input" onchange="uploadAttachment(event)">
+              <div id="attachments-list"></div>
+            </div>
+          </footer>
+        </div>
+      </main>
+    </div>
+
+    <!-- New Folder Modal -->
+    <div id="folder-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Create New Folder</h3>
+        <input type="text" id="new-folder-name" placeholder="Folder Name">
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+          <button class="btn btn-primary" onclick="createFolder()">Create</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Page Modal -->
+    <div id="page-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Create New Page</h3>
+        <input type="text" id="new-page-title" placeholder="Page Title">
+        <select id="new-page-folder">
+          <option value="">Root (No Folder)</option>
+        </select>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="closeModals()">Cancel</button>
+          <button class="btn btn-primary" onclick="createPage()">Create & Open</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="app.js"></script>
+<img class="paf-made-by" src="/made-by.png" alt="Made with App Builder — Pi SoloHost"></body>
+</html>
